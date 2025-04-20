@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
-  "homepage": "https://bujirenso.github.io/it35-lab/",
+  "homepage": "https://cliffamadeus.github.io/it35-lab/",
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
@@ -15,7 +15,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@capacitor/android": "7.0.1",
     "@capacitor/app": "7.0.0",
     "@capacitor/core": "7.0.1",
     "@capacitor/haptics": "7.0.0",
@@ -23,10 +22,9 @@
     "@capacitor/status-bar": "7.0.0",
     "@ionic/react": "^8.0.0",
     "@ionic/react-router": "^8.0.0",
-    "@supabase/supabase-js": "^2.49.4",
+    "@supabase/supabase-js": "^2.49.1",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "^5.3.3",
-    "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "ionicons": "^7.0.0",
     "react": "^18.2.0",
@@ -47,11 +45,10 @@
     "cypress": "^13.5.0",
     "eslint": "^8.35.0",
     "eslint-plugin-react": "^7.32.2",
-    "gh-pages": "^6.3.0",
     "jsdom": "^22.1.0",
     "terser": "^5.4.0",
     "typescript": "^5.1.6",
-    "vite": "^5.4.3",
+    "vite": "~5.2.0",
     "vitest": "^0.34.6"
   },
   "description": "An Ionic project"
