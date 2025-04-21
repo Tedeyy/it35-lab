@@ -127,7 +127,7 @@ const FeedContainer = () => {
                 <IonCardContent>
                     <IonInput value={postContent} onIonChange={e => setPostContent(e.detail.value!)} placeholder="Write a post..." />
                 </IonCardContent>
-                <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0.5rem'}}>
                     <IonButton onClick={createPost}>Post</IonButton>
                 </div>
             </IonCard>
@@ -158,7 +158,7 @@ const FeedContainer = () => {
                 </IonCardHeader>
               
                 <IonCardContent>
-                    <IonText style={{ color: 'black' }}>
+                    <IonText style={{ color: 'white' }}>
                         <h1>{post.post_content}</h1>
                     </IonText>
                 </IonCardContent>
