@@ -1,11 +1,12 @@
 import { 
   IonButtons,
-    IonContent, 
-    IonHeader, 
-    IonMenuButton, 
-    IonPage, 
-    IonTitle, 
-    IonToolbar 
+  IonContent, 
+  IonHeader, 
+  IonMenuButton, 
+  IonPage, 
+  IonTitle, 
+  IonToolbar, 
+  IonText
 } from '@ionic/react';
 
 const About: React.FC = () => {
@@ -13,13 +14,23 @@ const About: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot='start'>
+          <IonButtons>
             <IonMenuButton></IonMenuButton>
           </IonButtons>
-          <IonTitle>About</IonTitle>
+          <IonTitle></IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
+      <IonContent>
+        <IonText>
+          <div style={{ padding: '16px' }}>
+            <h2>About This App</h2>
+            <p>
+              Welcome to our application, a modern and enhanced social platform designed to bring people closer together. 
+              Think of it as a better Facebook—simpler, more intuitive, and focused on meaningful connections. 
+              Share your thoughts, connect with friends, and explore a community that values your voice.
+            </p>
+          </div>
+        </IonText>
       </IonContent>
     </IonPage>
   );
