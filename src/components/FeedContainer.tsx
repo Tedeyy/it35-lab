@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { IonApp, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton, IonInput, IonLabel, IonModal, IonFooter, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonAlert, IonText, IonAvatar, IonCol, IonGrid, IonRow, IonIcon, IonPopover } from '@ionic/react';
 import { User } from '@supabase/supabase-js';
-import { supabase } from '../src/utils/supabaseClient';
+import { supabase } from '../utils/supabaseClient';
 import { colorFill, pencil, trash } from 'ionicons/icons';
-import React from 'react';
 
 interface Post {
   post_id: string;
@@ -127,7 +126,7 @@ const FeedContainer = () => {
                 <IonCardContent>
                     <IonInput value={postContent} onIonChange={e => setPostContent(e.detail.value!)} placeholder="Write a post..." />
                 </IonCardContent>
-                <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0.5rem'}}>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0.5rem' }}>
                     <IonButton onClick={createPost}>Post</IonButton>
                 </div>
             </IonCard>
@@ -158,7 +157,7 @@ const FeedContainer = () => {
                 </IonCardHeader>
               
                 <IonCardContent>
-                    <IonText style={{ color: 'white' }}>
+                    <IonText style={{ color: 'black' }}>
                         <h1>{post.post_content}</h1>
                     </IonText>
                 </IonCardContent>
