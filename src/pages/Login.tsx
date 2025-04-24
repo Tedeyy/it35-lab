@@ -69,18 +69,18 @@ const Login: React.FC = () => {
               borderRadius: '50%', 
               overflow: 'hidden' 
             }}
-          >
-            <IonIcon 
-              icon={logoIonic}
-              color='primary'
-              style={{ fontSize: '120px', color: '#6c757d' }} 
+            >
+            <img 
+              src="https://i.pinimg.com/736x/8d/16/90/8d16902ae35c1e982c2990ff85fa11fb.jpg" 
+              alt="App Icon" 
+              style={{ width: '100%', height: '100%', borderRadius:'round' }} 
             />
-          </IonAvatar>
+            </IonAvatar>
           <h1 style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-          }}>USER LOGIN</h1>
+          }}>Login to JailFeed</h1>
           <IonInput
             label="Email" 
             labelPlacement="floating" 
@@ -89,6 +89,7 @@ const Login: React.FC = () => {
             placeholder="Enter Email"
             value={email}
             onIonChange={e => setEmail(e.detail.value!)}
+            shape='round'
           />
           <IonInput style={{ marginTop:'10px' }}      
             fill="outline"
@@ -96,15 +97,25 @@ const Login: React.FC = () => {
             placeholder="Password"
             value={password}
             onIonChange={e => setPassword(e.detail.value!)}
+            shape='round'
           >
             <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
           </IonInput>
         </div>
-        <IonButton onClick={doLogin} expand="full" shape='round'>
+        <IonButton onClick={doLogin} 
+        expand="full" 
+        shape='round' 
+        style={{ fontSize: '15px', fontWeight: 'bold' }}>
           Login
         </IonButton>
 
-        <IonButton routerLink="/it35-lab/register" expand="full" fill="clear" shape='round'>
+        <IonButton 
+          routerLink="/it35-lab/register" 
+          expand="full" 
+          fill="clear" 
+          shape='round' 
+          style={{ fontSize: '15px', fontWeight: 'bold' }}
+        >
           Don't have an account? Register here
         </IonButton>
 
