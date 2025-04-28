@@ -55,11 +55,15 @@ const FeedContainer = () => {
     const fetchPosts = async () => {
       const { data: postsData, error: postsError } = await supabase
         .from('posts')
-        .select('*, comments(*)') // Fetch posts with their comments
+        .select('*, comments(*), likes(count)')
         .order('post_created_at', { ascending: false });
     
       if (!postsError && postsData) {
-        setPosts(postsData as Post[]);
+        const updatedPosts = postsData.map(post => ({
+          ...post,
+          likes: post.likes?.count || 0, // Ensure likes is initialized to 0 if undefined
+        }));
+        setPosts(updatedPosts as Post[]);
       }
     };
   
@@ -109,25 +113,52 @@ const FeedContainer = () => {
     }
   };
   const incrementLikes = async (post_id: string) => {
+    if (!user) return; // Ensure the user is logged in
+  
+    // Check if the user already liked the post
+    const { data: existingLike, error: likeError } = await supabase
+      .from('likes')
+      .select('*')
+      .eq('post_id', post_id)
+      .eq('user_id', user.id)
+      .single();
+  
+    if (likeError && likeError.code !== 'PGRST116') {
+      console.error('Error checking like:', likeError);
+      return;
+    }
+  
     const postIndex = posts.findIndex(post => post.post_id === post_id);
     if (postIndex === -1) return;
   
     const post = posts[postIndex];
-    const updatedLikes = post.likes > 0 ? post.likes - 1 : post.likes + 1; // Toggle like/unlike
+    const currentLikes = post.likes || 0; // Ensure likes is a valid number
   
-    const updatedPost = { ...post, likes: updatedLikes };
+    if (existingLike) {
+      // Unlike the post
+      const { error: deleteError } = await supabase
+        .from('likes')
+        .delete()
+        .match({ post_id, user_id: user.id });
   
-    // Update the likes in the database
-    const { error } = await supabase
-      .from('posts')
-      .update({ likes: updatedLikes }) // Update only the likes column
-      .match({ post_id });
+      if (!deleteError) {
+        // Update the local state
+        const updatedPosts = [...posts];
+        updatedPosts[postIndex] = { ...post, likes: Math.max(currentLikes - 1, 0) }; // Prevent negative likes
+        setPosts(updatedPosts);
+      }
+    } else {
+      // Like the post
+      const { error: insertError } = await supabase
+        .from('likes')
+        .insert([{ post_id, user_id: user.id }]);
   
-    if (!error) {
-      // Update the local state
-      const updatedPosts = [...posts];
-      updatedPosts[postIndex] = updatedPost;
-      setPosts(updatedPosts);
+      if (!insertError) {
+        // Update the local state
+        const updatedPosts = [...posts];
+        updatedPosts[postIndex] = { ...post, likes: currentLikes + 1 };
+        setPosts(updatedPosts);
+      }
     }
   };
   const createPost = async () => {
@@ -243,17 +274,17 @@ const FeedContainer = () => {
                     <h1>{post.post_content}</h1>
                   </IonText>
                     <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
-                        <IonButton
+                      <IonButton
                         fill="clear"
                         onClick={() => incrementLikes(post.post_id)}
                         style={{ display: 'flex', alignItems: 'center' }}
-                        > 
+                      >
                         <IonIcon
-                        icon={post.likes > 0 ? heart : heartOutline}
-                        color={post.likes > 0 ? 'danger' : 'medium'}
-                         style={{ fontSize: '20px', marginRight: '5px' }}
+                          icon={post.likes > 0 ? heart : heartOutline}
+                          color={post.likes > 0 ? 'danger' : 'medium'}
+                          style={{ fontSize: '20px', marginRight: '5px' }}
                         />
-                        <IonText style={{ color: 'black' }}>{post.likes}</IonText>
+                        <IonText style={{ color: 'black' }}>{post.likes || 0}</IonText>
                       </IonButton>
                     </div>
 

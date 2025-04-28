@@ -71,7 +71,7 @@ const Login: React.FC = () => {
             }}
             >
             <img 
-              src="https://i.pinimg.com/736x/8d/16/90/8d16902ae35c1e982c2990ff85fa11fb.jpg" 
+              src="https://assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/interface-essential/trending-content-tz5fhif39v8obh4xyuhm6m.png/trending-content-wjeu0d7r12gdvwavxcu3.png" 
               alt="App Icon" 
               style={{ width: '100%', height: '100%', borderRadius:'round' }} 
             />
@@ -80,7 +80,7 @@ const Login: React.FC = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-          }}>Login to JailFeed</h1>
+          }}>Welcome to LitMeet</h1>
           <IonInput
             label="Email" 
             labelPlacement="floating" 
