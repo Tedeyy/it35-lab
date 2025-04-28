@@ -14,6 +14,16 @@ interface Post {
   post_created_at: string;
   post_updated_at: string;
   likes: number;
+  comments?: Comment[];
+}
+
+interface Comment {
+  comment_id: string;
+  post_id: string;
+  user_id: number;
+  username: string;
+  comment_content: string;
+  comment_created_at: string;
 }
 
 const FeedContainer = () => {
@@ -43,14 +53,61 @@ const FeedContainer = () => {
       }
     };
     const fetchPosts = async () => {
-      const { data, error } = await supabase.from('posts').select('*').order('post_created_at', { ascending: false });
-      if (!error) setPosts(data as Post[]);
+      const { data: postsData, error: postsError } = await supabase
+        .from('posts')
+        .select('*, comments(*)') // Fetch posts with their comments
+        .order('post_created_at', { ascending: false });
+    
+      if (!postsError && postsData) {
+        setPosts(postsData as Post[]);
+      }
     };
   
     fetchUser();
     fetchPosts();
   }, []);
 
+  const addComment = async (post_id: string, commentContent: string) => {
+    if (!user || !commentContent) return;
+  
+    const { data, error } = await supabase
+      .from('comments')
+      .insert([
+        {
+          post_id,
+          user_id: user.id,
+          username: username,
+          comment_content: commentContent,
+        },
+      ])
+      .select('*');
+  
+    if (!error && data) {
+      // Update the local state
+      const updatedPosts = posts.map(post =>
+        post.post_id === post_id
+          ? { ...post, comments: [...(post.comments || []), data[0]] }
+          : post
+      );
+      setPosts(updatedPosts);
+    }
+  };
+  const deleteComment = async (comment_id: string, post_id: string) => {
+    const { error } = await supabase
+      .from('comments')
+      .delete()
+      .match({ comment_id });
+  
+    if (!error) {
+      // Update the local state
+      const updatedPosts = posts.map(post =>
+        post.post_id === post_id
+          ? { ...post, comments: post.comments?.filter(comment => comment.comment_id !== comment_id) }
+          : post
+      );
+      setPosts(updatedPosts);
+    }
+  };
   const incrementLikes = async (post_id: string) => {
     const postIndex = posts.findIndex(post => post.post_id === post_id);
     if (postIndex === -1) return;
@@ -182,27 +239,58 @@ const FeedContainer = () => {
                 </IonCardHeader>
               
                 <IonCardContent>
-                    <IonText style={{ color: 'black' }}>
-                      <h1>{post.post_content}</h1>
-                    </IonText>
-                  <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
-                    <IonButton
-                      fill="clear"
-                      onClick={() => incrementLikes(post.post_id)}
-                      style={{ display: 'flex', alignItems: 'center' }}
-                      >
-                      <IonIcon
-                      icon={post.likes > 0 ? heart : heartOutline} // Change icon based on likes
-                      color={post.likes > 0 ? 'danger' : 'medium'} // Red if liked, gray otherwise
-                      style={{ fontSize: '20px', marginRight: '5px' }}
-                      />
-                      <IonText style={{ color: 'black' }}>{post.likes}</IonText>
-                    </IonButton>
-                  </div>
-                </IonCardContent>
+                  <IonText style={{ color: 'black' }}>
+                    <h1>{post.post_content}</h1>
+                  </IonText>
+                    <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
+                        <IonButton
+                        fill="clear"
+                        onClick={() => incrementLikes(post.post_id)}
+                        style={{ display: 'flex', alignItems: 'center' }}
+                        > 
+                        <IonIcon
+                        icon={post.likes > 0 ? heart : heartOutline}
+                        color={post.likes > 0 ? 'danger' : 'medium'}
+                         style={{ fontSize: '20px', marginRight: '5px' }}
+                        />
+                        <IonText style={{ color: 'black' }}>{post.likes}</IonText>
+                      </IonButton>
+                    </div>
+
+
+                    <div style={{ marginTop: '20px' }}>
+  <IonText style={{ fontWeight: 'bold', color: 'black' }}>Comments:</IonText>
+  {post.comments?.map(comment => (
+    <div key={comment.comment_id} style={{ marginTop: '10px', display: 'flex', alignItems: 'center' }}>
+      <IonText style={{ fontWeight: 'bold', color: 'black' }}>{comment.username}:</IonText>
+      <IonText style={{ marginLeft: '10px', color: 'black' }}>{comment.comment_content}</IonText>
+      <IonButton
+        fill="clear"
+        color="danger"
+        onClick={() => deleteComment(comment.comment_id, post.post_id)}
+        style={{ marginLeft: 'auto' }}
+      >
+        Delete
+      </IonButton>
+    </div>
+  ))}
+  <IonInput
+    placeholder="Write a comment..."
+    onIonChange={e => setPostContent(e.detail.value!)}
+    style={{ marginTop: '10px' }}
+  />
+  <IonButton
+    onClick={() => addComment(post.post_id, postContent)}
+    style={{ marginTop: '10px' }}
+  >
+    Add Comment
+  </IonButton>
+</div>
+                  </IonCardContent>
                 
                 {/* Popover with Edit and Delete options */}
                 <IonPopover
+                  style={{ borderRadius: '25px' }}
                   isOpen={popoverState.open && popoverState.postId === post.post_id}
                   event={popoverState.event}
                   onDidDismiss={() => setPopoverState({ open: false, event: null, postId: null })}
