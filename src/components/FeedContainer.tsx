@@ -3,6 +3,7 @@ import { IonApp, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton
 import { User } from '@supabase/supabase-js';
 import { supabase } from '../utils/supabaseClient';
 import { colorFill, pencil, trash } from 'ionicons/icons';
+import { heart, heartOutline } from 'ionicons/icons';
 
 interface Post {
   post_id: string;
@@ -12,6 +13,7 @@ interface Post {
   post_content: string;
   post_created_at: string;
   post_updated_at: string;
+  likes: number;
 }
 
 const FeedContainer = () => {
@@ -44,10 +46,33 @@ const FeedContainer = () => {
       const { data, error } = await supabase.from('posts').select('*').order('post_created_at', { ascending: false });
       if (!error) setPosts(data as Post[]);
     };
+  
     fetchUser();
     fetchPosts();
   }, []);
 
+  const incrementLikes = async (post_id: string) => {
+    const postIndex = posts.findIndex(post => post.post_id === post_id);
+    if (postIndex === -1) return;
+  
+    const post = posts[postIndex];
+    const updatedLikes = post.likes > 0 ? post.likes - 1 : post.likes + 1; // Toggle like/unlike
+  
+    const updatedPost = { ...post, likes: updatedLikes };
+  
+    // Update the likes in the database
+    const { error } = await supabase
+      .from('posts')
+      .update({ likes: updatedLikes }) // Update only the likes column
+      .match({ post_id });
+  
+    if (!error) {
+      // Update the local state
+      const updatedPosts = [...posts];
+      updatedPosts[postIndex] = updatedPost;
+      setPosts(updatedPosts);
+    }
+  };
   const createPost = async () => {
     if (!postContent || !user || !username) return;
   
@@ -119,9 +144,9 @@ const FeedContainer = () => {
         <IonContent>
           {user ? (
             <>
-            <IonCard>
+            <IonCard style={{ marginTop: '2rem', borderRadius: '10px', backgroundColor: 'white' }}>
                 <IonCardHeader>
-                    <IonCardTitle>Create Post</IonCardTitle>
+                    <IonCardTitle style={{color: "black"}}>Create Post</IonCardTitle>
                 </IonCardHeader>
                 <IonCardContent>
                     <IonInput value={postContent} onIonChange={e => setPostContent(e.detail.value!)} placeholder="Write a post..." />
@@ -132,7 +157,7 @@ const FeedContainer = () => {
             </IonCard>
 
               {posts.map(post => (
-                <IonCard key={post.post_id} style={{ marginTop: '2rem' }}>
+                <IonCard key={post.post_id} style={{ marginTop: '2rem', borderRadius: '10px', backgroundColor: 'white' }}>
                 <IonCardHeader>
                   <IonRow>
                     <IonCol size="1.85">
@@ -141,7 +166,7 @@ const FeedContainer = () => {
                       </IonAvatar>
                     </IonCol>
                     <IonCol>
-                      <IonCardTitle style={{ marginTop: '10px' }}>{post.username}</IonCardTitle>
+                      <IonCardTitle style={{ marginTop: '10px', color: "black"}}>{post.username}</IonCardTitle>
                       <IonCardSubtitle>{new Date(post.post_created_at).toLocaleString()}</IonCardSubtitle>
                     </IonCol>
                     <IonCol size="auto">
@@ -158,8 +183,22 @@ const FeedContainer = () => {
               
                 <IonCardContent>
                     <IonText style={{ color: 'black' }}>
-                        <h1>{post.post_content}</h1>
+                      <h1>{post.post_content}</h1>
                     </IonText>
+                  <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
+                    <IonButton
+                      fill="clear"
+                      onClick={() => incrementLikes(post.post_id)}
+                      style={{ display: 'flex', alignItems: 'center' }}
+                      >
+                      <IonIcon
+                      icon={post.likes > 0 ? heart : heartOutline} // Change icon based on likes
+                      color={post.likes > 0 ? 'danger' : 'medium'} // Red if liked, gray otherwise
+                      style={{ fontSize: '20px', marginRight: '5px' }}
+                      />
+                      <IonText style={{ color: 'black' }}>{post.likes}</IonText>
+                    </IonButton>
+                  </div>
                 </IonCardContent>
                 
                 {/* Popover with Edit and Delete options */}
