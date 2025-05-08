@@ -69,18 +69,18 @@ const Login: React.FC = () => {
               borderRadius: '50%', 
               overflow: 'hidden' 
             }}
-            >
-            <img 
-              src="https://assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/interface-essential/trending-content-tz5fhif39v8obh4xyuhm6m.png/trending-content-wjeu0d7r12gdvwavxcu3.png" 
-              alt="App Icon" 
-              style={{ width: '100%', height: '100%', borderRadius:'round' }} 
+          >
+            <IonIcon 
+              icon={logoIonic}
+              color='primary'
+              style={{ fontSize: '120px', color: '#6c757d' }} 
             />
-            </IonAvatar>
+          </IonAvatar>
           <h1 style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-          }}>Welcome to LitMeet</h1>
+          }}>USER LOGIN</h1>
           <IonInput
             label="Email" 
             labelPlacement="floating" 
@@ -89,7 +89,6 @@ const Login: React.FC = () => {
             placeholder="Enter Email"
             value={email}
             onIonChange={e => setEmail(e.detail.value!)}
-            shape='round'
           />
           <IonInput style={{ marginTop:'10px' }}      
             fill="outline"
@@ -97,25 +96,15 @@ const Login: React.FC = () => {
             placeholder="Password"
             value={password}
             onIonChange={e => setPassword(e.detail.value!)}
-            shape='round'
           >
             <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
           </IonInput>
         </div>
-        <IonButton onClick={doLogin} 
-        expand="full" 
-        shape='round' 
-        style={{ fontSize: '15px', fontWeight: 'bold' }}>
+        <IonButton onClick={doLogin} expand="full" shape='round'>
           Login
         </IonButton>
 
-        <IonButton 
-          routerLink="/it35-lab/register" 
-          expand="full" 
-          fill="clear" 
-          shape='round' 
-          style={{ fontSize: '15px', fontWeight: 'bold' }}
-        >
+        <IonButton routerLink="/it35-lab/register" expand="full" fill="clear" shape='round'>
           Don't have an account? Register here
         </IonButton>
 
