@@ -222,8 +222,7 @@ const FeedContainer = () => {
   };
 
   return (
-    <IonApp>
-      <IonPage>
+      <>
         <IonContent>
             <div
             style={{
@@ -298,33 +297,33 @@ const FeedContainer = () => {
 
 
                     <div style={{ marginTop: '20px' }}>
-  <IonText style={{ fontWeight: 'bold', color: 'white' }}>Comments:</IonText>
-  {post.comments?.map(comment => (
-    <div key={comment.comment_id} style={{ marginTop: '10px', display: 'flex', alignItems: 'center' }}>
-      <IonText style={{ fontWeight: 'bold', color: 'white' }}>{comment.username}:</IonText>
-      <IonText style={{ marginLeft: '10px', color: 'white' }}>{comment.comment_content}</IonText>
-      <IonButton
-        fill="clear"
-        color="danger"
-        onClick={() => deleteComment(comment.comment_id, post.post_id)}
-        style={{ marginLeft: 'auto' }}
-      >
-        Delete
-      </IonButton>
-    </div>
-  ))}
-  <IonInput
-    placeholder="Write a comment..."
-    onIonChange={e => setPostContent(e.detail.value!)}
-    style={{ marginTop: '10px' }}
-  />
-  <IonButton
-    onClick={() => addComment(post.post_id, postContent)}
-    style={{ marginTop: '10px' }}
-  >
-    Add Comment
-  </IonButton>
-</div>
+                      <IonText style={{ fontWeight: 'bold', color: 'white' }}>Comments:</IonText>
+                      {post.comments?.map(comment => (
+                        <div key={comment.comment_id} style={{ marginTop: '10px', display: 'flex', alignItems: 'center' }}>
+                          <IonText style={{ fontWeight: 'bold', color: 'white' }}>{comment.username}:</IonText>
+                          <IonText style={{ marginLeft: '10px', color: 'white' }}>{comment.comment_content}</IonText>
+                          <IonButton
+                            fill="clear"
+                            color="danger"
+                            onClick={() => deleteComment(comment.comment_id, post.post_id)}
+                            style={{ marginLeft: 'auto' }}
+                          >
+                           Delete
+                          </IonButton>
+                        </div>
+                      ))}
+                    <IonInput
+                      placeholder="Write a comment..."
+                      onIonChange={e => setPostContent(e.detail.value!)}
+                      style={{ marginTop: '10px' }}
+                    />
+                    <IonButton
+                      onClick={() => addComment(post.post_id, postContent)}
+                      style={{ marginTop: '10px' }}
+                    >
+                     Add Comment
+                    </IonButton>
+                  </div>
                   </IonCardContent>
                 
                 {/* Popover with Edit and Delete options */}
@@ -371,8 +370,7 @@ const FeedContainer = () => {
           message="Post updated successfully!"
           buttons={['OK']}
         />
-      </IonPage>
-    </IonApp>
+      </>
   );
 };
 
