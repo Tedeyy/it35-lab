@@ -28,12 +28,13 @@ const About: React.FC = () => {
           marginTop:'25%'
         }}>
           <img 
-            src='https://i.pinimg.com/736x/8d/16/90/8d16902ae35c1e982c2990ff85fa11fb.jpg' 
+            src="https://assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/interface-essential/trending-content-tz5fhif39v8obh4xyuhm6m.png/trending-content-wjeu0d7r12gdvwavxcu3.png"
+            alt="LitMeet Logo" 
             style={{ height: '200px', width: '200px', borderRadius: '50%'}} 
           ></img>
           <h1
             style={{ fontWeight : 'bold', fontSize: '30px', marginTop: '20px' }}
-          >JailFeed</h1>
+          >LitMeet</h1>
           <p
             style={{ fontSize: '20px', marginTop: '10px' }}
           >This is a sample Ionic React application.</p>

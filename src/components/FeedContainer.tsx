@@ -224,17 +224,25 @@ const FeedContainer = () => {
   return (
     <IonApp>
       <IonPage>
-        <IonHeader>
-          <IonToolbar>
-            <IonTitle>Posts</IonTitle>
-          </IonToolbar>
-        </IonHeader>
         <IonContent>
+            <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              backgroundImage: 'url(https://static.vecteezy.com/system/resources/previews/006/786/021/non_2x/seashell-seamless-pattern-summer-holiday-marine-background-underwater-ornamental-textured-sketching-wallpaper-with-sea-shells-sea-star-and-sand-vector.jpg)',
+              backgroundRepeat: 'repeat',
+              backgroundSize: 'cover',
+              zIndex: -1,
+            }}
+            ></div>
           {user ? (
             <>
-            <IonCard style={{ marginTop: '2rem', borderRadius: '10px', backgroundColor: 'white' }}>
+            <IonCard style={{ marginTop: '4rem', borderRadius: '10px', backgroundColor: 'rgba(0, 0, 0, 0.75)' }}>
                 <IonCardHeader>
-                    <IonCardTitle style={{color: "black"}}>Create Post</IonCardTitle>
+                    <IonCardTitle style={{color: "white"}}>Create Post</IonCardTitle>
                 </IonCardHeader>
                 <IonCardContent>
                     <IonInput value={postContent} onIonChange={e => setPostContent(e.detail.value!)} placeholder="Write a post..." />
@@ -245,7 +253,7 @@ const FeedContainer = () => {
             </IonCard>
 
               {posts.map(post => (
-                <IonCard key={post.post_id} style={{ marginTop: '2rem', borderRadius: '10px', backgroundColor: 'white' }}>
+                <IonCard key={post.post_id} style={{ marginTop: '2rem', marginBottom: '2rem', borderRadius: '10px', backgroundColor: 'rgba(0, 0, 0, 0.75)' }}>
                 <IonCardHeader>
                   <IonRow>
                     <IonCol size="1.85">
@@ -254,7 +262,7 @@ const FeedContainer = () => {
                       </IonAvatar>
                     </IonCol>
                     <IonCol>
-                      <IonCardTitle style={{ marginTop: '10px', color: "black"}}>{post.username}</IonCardTitle>
+                      <IonCardTitle style={{ marginTop: '10px', color: "white"}}>{post.username}</IonCardTitle>
                       <IonCardSubtitle>{new Date(post.post_created_at).toLocaleString()}</IonCardSubtitle>
                     </IonCol>
                     <IonCol size="auto">
@@ -270,7 +278,7 @@ const FeedContainer = () => {
                 </IonCardHeader>
               
                 <IonCardContent>
-                  <IonText style={{ color: 'black' }}>
+                  <IonText style={{ color: 'white' }}>
                     <h1>{post.post_content}</h1>
                   </IonText>
                     <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
@@ -284,17 +292,17 @@ const FeedContainer = () => {
                           color={post.likes > 0 ? 'danger' : 'medium'}
                           style={{ fontSize: '20px', marginRight: '5px' }}
                         />
-                        <IonText style={{ color: 'black' }}>{post.likes || 0}</IonText>
+                        <IonText style={{ color: 'white' }}>{post.likes || 0}</IonText>
                       </IonButton>
                     </div>
 
 
                     <div style={{ marginTop: '20px' }}>
-  <IonText style={{ fontWeight: 'bold', color: 'black' }}>Comments:</IonText>
+  <IonText style={{ fontWeight: 'bold', color: 'white' }}>Comments:</IonText>
   {post.comments?.map(comment => (
     <div key={comment.comment_id} style={{ marginTop: '10px', display: 'flex', alignItems: 'center' }}>
-      <IonText style={{ fontWeight: 'bold', color: 'black' }}>{comment.username}:</IonText>
-      <IonText style={{ marginLeft: '10px', color: 'black' }}>{comment.comment_content}</IonText>
+      <IonText style={{ fontWeight: 'bold', color: 'white' }}>{comment.username}:</IonText>
+      <IonText style={{ marginLeft: '10px', color: 'white' }}>{comment.comment_content}</IonText>
       <IonButton
         fill="clear"
         color="danger"

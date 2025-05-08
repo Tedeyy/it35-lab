@@ -173,8 +173,19 @@ const EditAccount: React.FC = () => {
           </IonButtons>
         </IonHeader>
         <IonContent className="ion-padding">
+          <img src="https://media.istockphoto.com/id/498168409/photo/summer-beach-with-strafish-and-shells.jpg?s=612x612&w=0&k=20&c=_SCAILCSzeekYQQAc94-rlAkj7t_1VmiqOb5DmVo_kE="
+               alt="background"
+                style={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  width: '100%', 
+                  height: '100%', 
+                  objectFit: 'cover', 
+                  zIndex: -1, 
+                }}></img>
           <IonItem>
-            <IonText color="secondary">
+            <IonText color="white">
               <h1>Edit Account</h1>
             </IonText>
           </IonItem>
@@ -210,6 +221,7 @@ const EditAccount: React.FC = () => {
             <IonRow>
               <IonCol>
                 <IonInput
+                  style={{backgroundColor: 'rgba(0, 0, 0, 0.2)' }} 
                   label="Username"
                   type="text"
                   labelPlacement="floating"
@@ -223,6 +235,7 @@ const EditAccount: React.FC = () => {
             <IonRow>
               <IonCol size="6">
                 <IonInput
+                  style={{backgroundColor: 'rgba(0, 0, 0, 0.2)' }} 
                   label="First Name"
                   type="text"
                   labelPlacement="floating"
@@ -234,6 +247,7 @@ const EditAccount: React.FC = () => {
               </IonCol>
               <IonCol size="6">
                 <IonInput
+                  style={{backgroundColor: 'rgba(0, 0, 0, 0.2)' }} 
                   label="Last Name"
                   type="text"
                   labelPlacement="floating"
@@ -252,6 +266,7 @@ const EditAccount: React.FC = () => {
             </IonText>
               <IonCol size="12">
                 <IonInput
+                  style={{backgroundColor: 'rgba(0, 0, 0, 0.2)' }} 
                   label="New Password"
                   type="password"
                   labelPlacement="floating"
@@ -270,6 +285,7 @@ const EditAccount: React.FC = () => {
             <IonRow>
               <IonCol size="12">
                 <IonInput
+                  style={{backgroundColor: 'rgba(0, 0, 0, 0.2)' }} 
                   label="Confirm Password"
                   type="password"
                   labelPlacement="floating"
@@ -293,6 +309,7 @@ const EditAccount: React.FC = () => {
               </IonText>
               <IonCol size="12">
                 <IonInput
+                  style={{backgroundColor: 'rgba(0, 0, 0, 0.2)' }} 
                   label="Current Password"
                   type="password"
                   labelPlacement="floating"
