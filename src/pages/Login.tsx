@@ -52,6 +52,18 @@ const Login: React.FC = () => {
   return (
     <IonPage>
       <IonContent className='ion-padding'>
+        <img src="https://www.mediastorehouse.com.au/p/780/tropical-sunset-beach-background-summer-landscape-33054654.jpg.webp"
+              alt="background"
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100%', 
+                height: '100%', 
+                objectFit: 'cover', 
+                zIndex: -1, 
+              }}
+        />
         <div style={{
           display: 'flex',
           flexDirection:'column',
@@ -59,29 +71,30 @@ const Login: React.FC = () => {
           justifyContent: 'center',
           marginTop:'25%'
         }}>
-          <IonAvatar
+            <IonAvatar
             style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: '150px',
-              height: '150px',
+              width: '200px', // Increased width
+              height: '200px', // Increased height
               borderRadius: '50%', 
               overflow: 'hidden' 
             }}
-          >
-            <IonIcon 
-              icon={logoIonic}
-              color='primary'
-              style={{ fontSize: '120px', color: '#6c757d' }} 
+            >
+            <img 
+              src="https://assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/interface-essential/trending-content-tz5fhif39v8obh4xyuhm6m.png/trending-content-wjeu0d7r12gdvwavxcu3.png"
+              alt="LitMeet Logo" 
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
             />
-          </IonAvatar>
+            </IonAvatar>
           <h1 style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-          }}>USER LOGIN</h1>
+          }}>Welcome to 𝙇𝙞𝙩𝙈𝙚𝙚𝙩</h1>
           <IonInput
+            style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)' }}
             label="Email" 
             labelPlacement="floating" 
             fill="outline"
@@ -90,7 +103,7 @@ const Login: React.FC = () => {
             value={email}
             onIonChange={e => setEmail(e.detail.value!)}
           />
-          <IonInput style={{ marginTop:'10px' }}      
+          <IonInput style={{ marginTop:'10px', backgroundColor: 'rgba(0, 0, 0, 0.2)'}}      
             fill="outline"
             type="password"
             placeholder="Password"
