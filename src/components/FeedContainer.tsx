@@ -3,7 +3,6 @@ import { IonApp, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton
 import { User } from '@supabase/supabase-js';
 import { supabase } from '../utils/supabaseClient';
 import { colorFill, pencil, trash } from 'ionicons/icons';
-import { heart, heartOutline } from 'ionicons/icons';
 
 interface Post {
   post_id: string;
@@ -13,17 +12,6 @@ interface Post {
   post_content: string;
   post_created_at: string;
   post_updated_at: string;
-  likes: number;
-  comments?: Comment[];
-}
-
-interface Comment {
-  comment_id: string;
-  post_id: string;
-  user_id: number;
-  username: string;
-  comment_content: string;
-  comment_created_at: string;
 }
 
 const FeedContainer = () => {
@@ -53,114 +41,13 @@ const FeedContainer = () => {
       }
     };
     const fetchPosts = async () => {
-      const { data: postsData, error: postsError } = await supabase
-        .from('posts')
-        .select('*, comments(*), likes(count)')
-        .order('post_created_at', { ascending: false });
-    
-      if (!postsError && postsData) {
-        const updatedPosts = postsData.map(post => ({
-          ...post,
-          likes: post.likes?.count || 0, // Ensure likes is initialized to 0 if undefined
-        }));
-        setPosts(updatedPosts as Post[]);
-      }
+      const { data, error } = await supabase.from('posts').select('*').order('post_created_at', { ascending: false });
+      if (!error) setPosts(data as Post[]);
     };
-  
     fetchUser();
     fetchPosts();
   }, []);
 
-  const addComment = async (post_id: string, commentContent: string) => {
-    if (!user || !commentContent) return;
-  
-    const { data, error } = await supabase
-      .from('comments')
-      .insert([
-        {
-          post_id,
-          user_id: user.id,
-          username: username,
-          comment_content: commentContent,
-        },
-      ])
-      .select('*');
-  
-    if (!error && data) {
-      // Update the local state
-      const updatedPosts = posts.map(post =>
-        post.post_id === post_id
-          ? { ...post, comments: [...(post.comments || []), data[0]] }
-          : post
-      );
-      setPosts(updatedPosts);
-    }
-  };
-  const deleteComment = async (comment_id: string, post_id: string) => {
-    const { error } = await supabase
-      .from('comments')
-      .delete()
-      .match({ comment_id });
-  
-    if (!error) {
-      // Update the local state
-      const updatedPosts = posts.map(post =>
-        post.post_id === post_id
-          ? { ...post, comments: post.comments?.filter(comment => comment.comment_id !== comment_id) }
-          : post
-      );
-      setPosts(updatedPosts);
-    }
-  };
-  const incrementLikes = async (post_id: string) => {
-    if (!user) return; // Ensure the user is logged in
-  
-    // Check if the user already liked the post
-    const { data: existingLike, error: likeError } = await supabase
-      .from('likes')
-      .select('*')
-      .eq('post_id', post_id)
-      .eq('user_id', user.id)
-      .single();
-  
-    if (likeError && likeError.code !== 'PGRST116') {
-      console.error('Error checking like:', likeError);
-      return;
-    }
-  
-    const postIndex = posts.findIndex(post => post.post_id === post_id);
-    if (postIndex === -1) return;
-  
-    const post = posts[postIndex];
-    const currentLikes = post.likes || 0; // Ensure likes is a valid number
-  
-    if (existingLike) {
-      // Unlike the post
-      const { error: deleteError } = await supabase
-        .from('likes')
-        .delete()
-        .match({ post_id, user_id: user.id });
-  
-      if (!deleteError) {
-        // Update the local state
-        const updatedPosts = [...posts];
-        updatedPosts[postIndex] = { ...post, likes: Math.max(currentLikes - 1, 0) }; // Prevent negative likes
-        setPosts(updatedPosts);
-      }
-    } else {
-      // Like the post
-      const { error: insertError } = await supabase
-        .from('likes')
-        .insert([{ post_id, user_id: user.id }]);
-  
-      if (!insertError) {
-        // Update the local state
-        const updatedPosts = [...posts];
-        updatedPosts[postIndex] = { ...post, likes: currentLikes + 1 };
-        setPosts(updatedPosts);
-      }
-    }
-  };
   const createPost = async () => {
     if (!postContent || !user || !username) return;
   
@@ -222,9 +109,9 @@ const FeedContainer = () => {
   };
 
   return (
-      <>
-        <IonContent>
-            <div
+    <>
+      <IonContent>
+        <div
             style={{
               position: 'fixed',
               top: 0,
@@ -237,22 +124,26 @@ const FeedContainer = () => {
               zIndex: -1,
             }}
             ></div>
-          {user ? (
-            <>
+        {user ? (
+          <>
             <IonCard style={{ marginTop: '4rem', borderRadius: '10px', backgroundColor: 'rgba(0, 0, 0, 0.75)' }}>
-                <IonCardHeader>
-                    <IonCardTitle style={{color: "white"}}>Create Post</IonCardTitle>
-                </IonCardHeader>
-                <IonCardContent>
-                    <IonInput value={postContent} onIonChange={e => setPostContent(e.detail.value!)} placeholder="Write a post..." />
-                </IonCardContent>
-                <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0.5rem' }}>
-                    <IonButton onClick={createPost}>Post</IonButton>
-                </div>
+              <IonCardHeader>
+                <IonCardTitle>Create Post</IonCardTitle>
+              </IonCardHeader>
+              <IonCardContent>
+                <IonInput
+                  value={postContent}
+                  onIonChange={e => setPostContent(e.detail.value!)}
+                  placeholder="Write a post..."
+                />
+              </IonCardContent>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0.5rem' }}>
+                <IonButton onClick={createPost}>Post</IonButton>
+              </div>
             </IonCard>
-
-              {posts.map(post => (
-                <IonCard key={post.post_id} style={{ marginTop: '2rem', marginBottom: '2rem', borderRadius: '10px', backgroundColor: 'rgba(0, 0, 0, 0.75)' }}>
+  
+            {posts.map(post => (
+               <IonCard key={post.post_id} style={{ marginTop: '2rem', marginBottom: '2rem', borderRadius: '10px', backgroundColor: 'rgba(0, 0, 0, 0.75)' }}>
                 <IonCardHeader>
                   <IonRow>
                     <IonCol size="1.85">
@@ -265,113 +156,93 @@ const FeedContainer = () => {
                       <IonCardSubtitle>{new Date(post.post_created_at).toLocaleString()}</IonCardSubtitle>
                     </IonCol>
                     <IonCol size="auto">
-                      {/* Pencil icon triggers popover */}
                       <IonButton
                         fill="clear"
-                        onClick={(e) => setPopoverState({ open: true, event: e.nativeEvent, postId: post.post_id })}
+                        onClick={(e) =>
+                          setPopoverState({
+                            open: true,
+                            event: e.nativeEvent,
+                            postId: post.post_id,
+                          })
+                        }
                       >
                         <IonIcon color="secondary" icon={pencil} />
                       </IonButton>
                     </IonCol>
                   </IonRow>
                 </IonCardHeader>
-              
+  
                 <IonCardContent>
                   <IonText style={{ color: 'white' }}>
                     <h1>{post.post_content}</h1>
                   </IonText>
-                    <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
-                      <IonButton
-                        fill="clear"
-                        onClick={() => incrementLikes(post.post_id)}
-                        style={{ display: 'flex', alignItems: 'center' }}
-                      >
-                        <IonIcon
-                          icon={post.likes > 0 ? heart : heartOutline}
-                          color={post.likes > 0 ? 'danger' : 'medium'}
-                          style={{ fontSize: '20px', marginRight: '5px' }}
-                        />
-                        <IonText style={{ color: 'white' }}>{post.likes || 0}</IonText>
-                      </IonButton>
-                    </div>
-
-
-                    <div style={{ marginTop: '20px' }}>
-                      <IonText style={{ fontWeight: 'bold', color: 'white' }}>Comments:</IonText>
-                      {post.comments?.map(comment => (
-                        <div key={comment.comment_id} style={{ marginTop: '10px', display: 'flex', alignItems: 'center' }}>
-                          <IonText style={{ fontWeight: 'bold', color: 'white' }}>{comment.username}:</IonText>
-                          <IonText style={{ marginLeft: '10px', color: 'white' }}>{comment.comment_content}</IonText>
-                          <IonButton
-                            fill="clear"
-                            color="danger"
-                            onClick={() => deleteComment(comment.comment_id, post.post_id)}
-                            style={{ marginLeft: 'auto' }}
-                          >
-                           Delete
-                          </IonButton>
-                        </div>
-                      ))}
-                    <IonInput
-                      placeholder="Write a comment..."
-                      onIonChange={e => setPostContent(e.detail.value!)}
-                      style={{ marginTop: '10px' }}
-                    />
-                    <IonButton
-                      onClick={() => addComment(post.post_id, postContent)}
-                      style={{ marginTop: '10px' }}
-                    >
-                     Add Comment
-                    </IonButton>
-                  </div>
-                  </IonCardContent>
-                
-                {/* Popover with Edit and Delete options */}
+                </IonCardContent>
+  
                 <IonPopover
-                  style={{ borderRadius: '25px' }}
                   isOpen={popoverState.open && popoverState.postId === post.post_id}
                   event={popoverState.event}
-                  onDidDismiss={() => setPopoverState({ open: false, event: null, postId: null })}
+                  onDidDismiss={() =>
+                    setPopoverState({ open: false, event: null, postId: null })
+                  }
                 >
-                  <IonButton fill="clear" onClick={() => { startEditingPost(post); setPopoverState({ open: false, event: null, postId: null }); }}>
+                  <IonButton
+                    fill="clear"
+                    onClick={() => {
+                      startEditingPost(post);
+                      setPopoverState({ open: false, event: null, postId: null });
+                    }}
+                  >
                     Edit
                   </IonButton>
-                  <IonButton fill="clear" color="danger" onClick={() => { deletePost(post.post_id); setPopoverState({ open: false, event: null, postId: null }); }}>
+                  <IonButton
+                    fill="clear"
+                    color="danger"
+                    onClick={() => {
+                      deletePost(post.post_id);
+                      setPopoverState({ open: false, event: null, postId: null });
+                    }}
+                  >
                     Delete
                   </IonButton>
                 </IonPopover>
               </IonCard>
-              ))}
-            </>
-          ) : (
-            <IonLabel>Loading...</IonLabel>
-          )}
+            ))}
+          </>
+        ) : (
+          <IonLabel>Loading...</IonLabel>
+        )}
+      </IonContent>
+  
+      <IonModal isOpen={isModalOpen} onDidDismiss={() => setIsModalOpen(false)}>
+        <IonHeader>
+          <IonToolbar>
+            <IonTitle>Edit Post</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent>
+          <IonInput
+            value={postContent}
+            onIonChange={e => setPostContent(e.detail.value!)}
+            placeholder="Edit your post..."
+          />
         </IonContent>
-
-        <IonModal isOpen={isModalOpen} onDidDismiss={() => setIsModalOpen(false)}>
-          <IonHeader>
-            <IonToolbar>
-              <IonTitle>Edit Post</IonTitle>
-            </IonToolbar>
-          </IonHeader>
-          <IonContent>
-            <IonInput value={postContent} onIonChange={e => setPostContent(e.detail.value!)} placeholder="Edit your post..." />
-          </IonContent>
-          <IonFooter>
-            <IonButton onClick={savePost}>Save</IonButton>
-            <IonButton onClick={() => setIsModalOpen(false)}>Cancel</IonButton>
-          </IonFooter>
-        </IonModal>
-
-        <IonAlert
-          isOpen={isAlertOpen}
-          onDidDismiss={() => setIsAlertOpen(false)}
-          header="Success"
-          message="Post updated successfully!"
-          buttons={['OK']}
-        />
-      </>
+        <IonFooter>
+          <IonButton onClick={savePost}>Save</IonButton>
+          <IonButton onClick={() => setIsModalOpen(false)}>Cancel</IonButton>
+        </IonFooter>
+      </IonModal>
+  
+      <IonAlert
+        isOpen={isAlertOpen}
+        onDidDismiss={() => setIsAlertOpen(false)}
+        header="Success"
+        message="Post updated successfully!"
+        buttons={['OK']}
+      />
+    </>
   );
+  
+
 };
 
 export default FeedContainer;
